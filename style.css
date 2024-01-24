@@ -60,15 +60,18 @@ button {
 	grid-row: 2;
 
 	grid-template-rows: 30px 1fr;
-	column-gap: 8px;
+	gap: 8px;
 	justify-items: stretch;
+	align-items: start;
 }
 
 .table-header {
 	grid-row: 1 / 2;
+}
 
+.table-header,
+.book-container {
 	grid-template-columns: minmax(20px, 1fr) 4fr 4fr repeat(2, minmax(20px, 1fr));
-	border-bottom: 4px solid white;
 	column-gap: 8px;
 }
 

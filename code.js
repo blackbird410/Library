@@ -1,23 +1,54 @@
-createInterface();
-
 const myLibrary = [];
+addBookToLibrary('Atomic Habits', 'James Clear', 271, false);
+createInterface();
+displayLibrary();
 
-function Book(title, author, pages) {
+function Book(title, author, pages, read) {
 	this.title = title;
 	this.author = author;
 	this.pages = pages;
-	this.read = false;
+	this.read = read;
 };
 
-function addBookToLibrary(bookTitle, bookAuthor, bookPages) {
-	const newBook = new Book(bookTitle, bookAuthor, bookPages);
+function addBookToLibrary(bookTitle, bookAuthor, bookPages, bookRead) {
+	const newBook = new Book(bookTitle, bookAuthor, bookPages, bookRead);
 	myLibrary.push(newBook);
 };
 
 function displayLibrary() {
+	const mainContainer = document.querySelector('.main');
+	const bookContainer = document.createElement('div');
+	bookContainer.classList.add('book-container', 'container');
+	let counter = 1;
 	myLibrary.forEach(book => {
-		// Display the book on the page
+		// Display the books on the page
+		const fields = ['index', 'title', 'author', 'pages', 'read'];
+		fields.forEach(field => {
+			const f = document.createElement('p');
+			f.classList.add(`book-${field}`);
 
+			switch(field)
+			{
+				case 'title':
+					f.textContent = book.title;
+					break;
+				case 'author':
+					f.textContent = book.author;
+					break;
+				case 'pages':
+					f.textContent = book.pages;
+					break;
+				case 'read':
+					f.textContent = book.read ? 'Yes' : 'No';
+					break;
+				default:
+					f.textContent = counter;
+					counter += 1;
+					break;
+			}
+			bookContainer.appendChild(f);			
+		});
+		mainContainer.appendChild(bookContainer);
 	});
 };
 
