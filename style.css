@@ -1,0 +1,61 @@
+:root {
+	--side-padding: 2rem;
+
+	--bg-color: #5072A7;
+	--header-color: #00308F;
+	--btn-color: #231709;
+}
+
+
+body {
+	height: 100vh;
+	display: grid;
+	grid-template-rows: 150px 1fr 50px;
+	grid-template-columns: 1fr;
+	margin: 0;
+	padding: 0;
+	background-color: var(--bg-color);
+}
+
+.container {
+	display: grid;
+	align-items: center;
+	justify-items: center;
+}
+
+.header,
+.footer {
+	background-color: var(--header-color);
+	color: white;
+	padding: 12px var(--side-padding);
+}
+
+.header {
+	grid-template-rows: 2fr 1fr;
+
+	justify-items: stretch;
+	text-align: center;
+	gap: 12px;
+}
+
+.btn-container {
+	grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+	gap: 12px;	
+}
+
+button {
+	padding: 8px 18px;
+	border-radius: 16px;
+	border: 2px solid gray;
+	background-color: var(--btn-color);
+	font-weight: 800;
+	color: white;
+}
+
+.main {
+	grid-row: 2;
+}
+
+.footer {
+	grid-row: 3;
+}
