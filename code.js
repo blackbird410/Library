@@ -26,13 +26,16 @@ function createInterface() {
 	const header = document.createElement('div');
 	const footer = document.createElement('div');
 	const main = document.createElement('div');
+	const tableHeader = document.createElement('div');
 	const title = document.createElement('h1');
 	const btnContainer = document.createElement('div');
 	const btns = ["NEW BOOK", "REMOVE BOOK"];
+	const tableHeaders = ['Index', 'Title', 'Author', 'Pages', 'Read'];
 
 	header.classList.add('header', 'container');
 	footer.classList.add('footer', 'container');
 	main.classList.add('main', 'container');
+	tableHeader.classList.add('table-header', 'container');
 	title.classList.add('title');
 	btnContainer.classList.add('btn-container', 'container');
 
@@ -46,7 +49,14 @@ function createInterface() {
 		btnContainer.appendChild(btn);
 	});
 
+	tableHeaders.forEach(elt => {
+		const e = document.createElement('h3');
+		e.textContent = elt;
+		tableHeader.appendChild(e);
+	})
+
 	header.appendChild(btnContainer);
+	main.appendChild(tableHeader);
 	footer.textContent = "Copyright \u00A9 Neil Taison Rigaud 2024";
 
 	document.body.appendChild(header);
