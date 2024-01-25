@@ -1,7 +1,9 @@
 const myLibrary = [];
 addBookToLibrary('Atomic Habits', 'James Clear', 271, false);
+addBookToLibrary('The Social Contract and Discourses', 'Jean-Jacques Rousseau', 362, false);
 createInterface();
 displayLibrary();
+fillBookInfo();
 
 function Book(title, author, pages, read) {
 	this.title = title;
@@ -9,6 +11,104 @@ function Book(title, author, pages, read) {
 	this.pages = pages;
 	this.read = read;
 };
+
+function fillBookInfo() {
+	// Remove the table of books
+	// Display the form for adding a new book
+	// Access the inputs from the form when submitted
+	// Create a new book object and add it to the library
+	// Display the library with the new book added
+	
+	removeTable();
+	displayForm();
+};
+
+function removeTable() {
+	const tHead = document.querySelector('.table-header');
+        const books = document.querySelectorAll('.book-container');
+        tHead.remove();
+        Array.from(books).forEach(book => book.remove());
+};
+
+function displayForm() {
+	const container = document.querySelector('.main');
+	const form = document.createElement('form');
+	const fieldset = document.createElement('fieldset');
+	const legend = document.createElement('legend');
+	const fields = ['Title', 'Author', 'Pages', 'Read'];
+	const btns = ['Add', 'Clear'];
+
+	form.classList.add('container');
+	fieldset.classList.add('container');
+
+	legend.textContent = 'Book information';
+	fieldset.appendChild(legend);
+
+	fields.forEach(field => {
+		let id = field.toLowerCase();
+		switch(field)
+		{
+			case 'Title':
+			case 'Author':
+			case 'Pages':
+				const label = document.createElement('label');
+				label.setAttribute('for', id);
+				label.textContent = field;
+				const input = document.createElement('input');
+				input.setAttribute('id', id);
+				input.setAttribute('name', id);
+
+				if (field === 'Pages')
+					input.setAttribute('type', 'number');
+				fieldset.appendChild(label);
+                                fieldset.appendChild(input);
+				break;
+			default:
+				const optContainer = document.createElement('div');
+                                optContainer.classList.add('options', 'container');
+				const optLabel = document.createElement('label');
+                                optLabel.setAttribute('id', 'read-label');
+                                optLabel.textContent = "Have you read the book?";
+
+				['Yes', 'No'].forEach(option => {
+					const optRadioBtn = document.createElement('input');
+					optRadioBtn.setAttribute('type', 'radio');
+					optRadioBtn.setAttribute('id', option.toLowerCase());
+					optRadioBtn.setAttribute('name', id);
+					optRadioBtn.setAttribute('value', (option === 'Yes') ? true : false);
+					if (option == 'No')
+						optRadioBtn.checked = true;
+
+					const label = document.createElement('label');
+					label.setAttribute('for', option.toLowerCase());
+					label.textContent = option;
+
+					const radioContainer =  document.createElement('div');
+					radioContainer.classList.add('radio', 'container');
+
+					radioContainer.appendChild(optRadioBtn);
+					radioContainer.appendChild(label);
+					optContainer.appendChild(radioContainer);
+				});
+				
+				fieldset.appendChild(optLabel);
+				fieldset.appendChild(optContainer);
+				break;
+
+		}
+	});
+
+	btns.forEach(btnTitle => {
+		const btn = document.createElement('button');
+		btn.setAttribute('id', `${btnTitle.toLowerCase()}-btn`);
+		btn.textContent = btnTitle;
+		btn.setAttribute('type', (btnTitle === 'Add') ? 'Submit': 'Reset');
+		fieldset.appendChild(btn);
+	});
+
+	form.appendChild(fieldset);
+	container.appendChild(form);
+}
 
 function addBookToLibrary(bookTitle, bookAuthor, bookPages, bookRead) {
 	const newBook = new Book(bookTitle, bookAuthor, bookPages, bookRead);
