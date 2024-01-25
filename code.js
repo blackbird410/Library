@@ -1,9 +1,10 @@
 const myLibrary = [];
 addBookToLibrary('Atomic Habits', 'James Clear', 271, false);
-addBookToLibrary('The Social Contract and Discourses', 'Jean-Jacques Rousseau', 362, false);
+//addBookToLibrary('The Social Contract and Discourses', 'Jean-Jacques Rousseau', 362, false);
 createInterface();
 displayLibrary();
-fillBookInfo();
+
+
 
 function Book(title, author, pages, read) {
 	this.title = title;
@@ -35,11 +36,15 @@ function displayForm() {
 	const form = document.createElement('form');
 	const fieldset = document.createElement('fieldset');
 	const legend = document.createElement('legend');
+	const btnContainer = document.createElement('div');
 	const fields = ['Title', 'Author', 'Pages', 'Read'];
 	const btns = ['Add', 'Clear'];
 
 	form.classList.add('container');
+	form.setAttribute('id', 'form');
+	form.noValidate = true;
 	fieldset.classList.add('container');
+	btnContainer.classList.add('btn-container', 'container');
 
 	legend.textContent = 'Book information';
 	fieldset.appendChild(legend);
@@ -103,12 +108,51 @@ function displayForm() {
 		btn.setAttribute('id', `${btnTitle.toLowerCase()}-btn`);
 		btn.textContent = btnTitle;
 		btn.setAttribute('type', (btnTitle === 'Add') ? 'Submit': 'Reset');
-		fieldset.appendChild(btn);
+		btnContainer.appendChild(btn);
 	});
 
 	form.appendChild(fieldset);
+	form.appendChild(btnContainer);
 	container.appendChild(form);
-}
+	form.addEventListener('submit', validateForm);
+};
+
+function validateForm(e) {
+	e.preventDefault();
+
+	let validInput = true;
+
+	const inputs = document.querySelectorAll('input');
+
+	// Validate each input
+	const inputValues = [];
+	Array.from(inputs).forEach(input => {
+		switch(input.type)
+		{
+			case 'radio':
+				if (input.checked)
+					inputValues.push(input.id);
+				break;
+			default:
+				if (!input.value)
+					validInput = false;
+				else
+					inputValues.push(input.value);
+				break
+		}
+	});
+
+	if (validInput)
+	{
+		let read = (inputValues[3] === 'yes') ? true : false;
+		addBookToLibrary(inputValues[0], inputValues[1], Number(inputValues[2]), read);
+		document.querySelector('#form').remove();
+		displayLibrary();
+	}
+	else 
+		console.log("Error");
+
+};
 
 function addBookToLibrary(bookTitle, bookAuthor, bookPages, bookRead) {
 	const newBook = new Book(bookTitle, bookAuthor, bookPages, bookRead);
@@ -117,9 +161,21 @@ function addBookToLibrary(bookTitle, bookAuthor, bookPages, bookRead) {
 
 function displayLibrary() {
 	const mainContainer = document.querySelector('.main');
+	
+	const tableHeader = document.createElement('div');
+        const tableHeaders = ['Index', 'Title', 'Author', 'Pages', 'Read'];
+        tableHeader.classList.add('table-header', 'container');
+        tableHeaders.forEach(elt => {
+                const e = document.createElement('h3');
+                e.textContent = elt;
+                tableHeader.appendChild(e);
+        });
+	mainContainer.appendChild(tableHeader);
+
 	const bookContainer = document.createElement('div');
 	bookContainer.classList.add('book-container', 'container');
 	let counter = 1;
+
 	myLibrary.forEach(book => {
 		// Display the books on the page
 		const fields = ['index', 'title', 'author', 'pages', 'read'];
@@ -159,35 +215,21 @@ function createInterface() {
 	const main = document.createElement('div');
 	const tableHeader = document.createElement('div');
 	const title = document.createElement('h1');
-	const btnContainer = document.createElement('div');
-	const btns = ["NEW BOOK", "REMOVE BOOK"];
-	const tableHeaders = ['Index', 'Title', 'Author', 'Pages', 'Read'];
 
 	header.classList.add('header', 'container');
 	footer.classList.add('footer', 'container');
 	main.classList.add('main', 'container');
-	tableHeader.classList.add('table-header', 'container');
 	title.classList.add('title');
-	btnContainer.classList.add('btn-container', 'container');
 
 	title.textContent = "Book Library";
 	header.appendChild(title);
 
-	btns.forEach(btnTitle => {
-		const btn = document.createElement('button');
-		btn.textContent = btnTitle;
-		btn.setAttribute('id', btnTitle.toLowerCase().split(' ').join('-'));
-		btnContainer.appendChild(btn);
-	});
+	const btn = document.createElement('button');
+	btn.textContent = "NEW BOOK";
+	btn.setAttribute('id', 'new-book');
+	btn.addEventListener('click', fillBookInfo);
 
-	tableHeaders.forEach(elt => {
-		const e = document.createElement('h3');
-		e.textContent = elt;
-		tableHeader.appendChild(e);
-	})
-
-	header.appendChild(btnContainer);
-	main.appendChild(tableHeader);
+	header.appendChild(btn);
 	footer.textContent = "Copyright \u00A9 Neil Taison Rigaud 2024";
 
 	document.body.appendChild(header);

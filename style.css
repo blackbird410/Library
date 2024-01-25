@@ -38,7 +38,7 @@ body > div {
 }
 
 .header {
-	grid-template-rows: 2fr 1fr;
+	grid-template-columns: 2fr 1fr;;
 
 	justify-items: stretch;
 	text-align: center;
@@ -51,6 +51,7 @@ body > div {
 }
 
 button {
+	max-width: 200px;
 	padding: 8px 18px;
 	border-radius: 16px;
 	border: 2px solid gray;
@@ -87,9 +88,14 @@ button {
 form {
 	grid-row: 1 / -1;
 	align-self: stretch;
+	grid-template-rows: 3fr 1fr;
+	padding: 1rem;
 }
 
 fieldset {
+	grid-column: 1 / 2;
+	align-self: stretch;
+
 	grid-template-rows: repeat(5, 1fr);
 	grid-template-columns: 1fr 1fr;
 }
@@ -97,7 +103,6 @@ fieldset {
 .options {
 	grid-template-columns: repeat(2, 1fr);
 	column-gap: 12px;
-	justify-self: stretch;
 }
 
 .radio {
@@ -106,6 +111,9 @@ fieldset {
 	gap: 8px;
 }
 
+.main .btn-container {
+	width: min(250px, 80%);
+}
 
 .footer {
 	grid-row: 3;
