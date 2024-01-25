@@ -1,6 +1,7 @@
 const myLibrary = [];
 addBookToLibrary('Atomic Habits', 'James Clear', 271, false);
-//addBookToLibrary('The Social Contract and Discourses', 'Jean-Jacques Rousseau', 362, false);
+addBookToLibrary('The Social Contract and Discourses', 'Jean-Jacques Rousseau', 362, false);
+addBookToLibrary('The Meditations of Marcus Aurelius', 'Marcus Aurelius', 128, true);
 createInterface();
 displayLibrary();
 
@@ -200,6 +201,7 @@ function displayLibrary() {
 		});
 		const removeBtn = document.createElement('button');
                 removeBtn.classList.add('remove-btn');
+		removeBtn.setAttribute('id', counter - 1);
                 removeBtn.textContent = 'Remove';
 		removeBtn.addEventListener('click', removeBook);
 
@@ -209,10 +211,10 @@ function displayLibrary() {
 };
 
 function removeBook(e) {
-	const bookTarget = e.currentTarget.parentElement;
-	let index = Number(bookTarget.querySelector('.book-index').textContent) - 1;
+	let index = Number(e.currentTarget.id) - 1;
 	myLibrary.splice(index, 1);
-	bookTarget.remove();
+	removeTable();
+	displayLibrary();
 }
 
 function createInterface() {
