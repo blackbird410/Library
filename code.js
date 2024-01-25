@@ -204,8 +204,15 @@ function displayLibrary() {
 		removeBtn.setAttribute('id', counter - 1);
                 removeBtn.textContent = 'Remove';
 		removeBtn.addEventListener('click', removeBook);
+		
+		const toggleRead = document.createElement('button');
+		toggleRead.classList.add('toggle-read-btn');
+		toggleRead.setAttribute('id', counter - 1);
+		toggleRead.textContent = 'Read?';
+		toggleRead.addEventListener('click', toggleReadStatus);
 
                 bookContainer.appendChild(removeBtn);
+		bookContainer.appendChild(toggleRead);
 		mainContainer.appendChild(bookContainer);
 	});
 };
@@ -215,7 +222,14 @@ function removeBook(e) {
 	myLibrary.splice(index, 1);
 	removeTable();
 	displayLibrary();
-}
+};
+
+function toggleReadStatus(e) {
+	let index = e.currentTarget.id - 1;
+	myLibrary[index].read = (myLibrary[index].read) ? false : true;
+	removeTable();
+	displayLibrary();
+};
 
 function createInterface() {
 	// Create a library interface for displaying books 
