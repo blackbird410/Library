@@ -235,6 +235,7 @@ function createInterface() {
 	// Create a library interface for displaying books 
 	const header = document.createElement('div');
 	const footer = document.createElement('div');
+	const link = document.createElement('a');
 	const main = document.createElement('div');
 	const tableHeader = document.createElement('div');
 	const title = document.createElement('h1');
@@ -253,7 +254,10 @@ function createInterface() {
 	btn.addEventListener('click', fillBookInfo);
 
 	header.appendChild(btn);
-	footer.textContent = "Copyright \u00A9 Neil Taison Rigaud 2024";
+	link.textContent = "Copyright \u00A9 Neil Taison Rigaud 2024";
+	link.setAttribute('href', 'https://blackbird410.github.io/');
+	link.setAttribute('target', '_blank');
+	footer.appendChild(link);
 
 	document.body.appendChild(header);
 	document.body.appendChild(main);
