@@ -13,13 +13,7 @@ function Book(title, author, pages, read) {
 	this.read = read;
 };
 
-function fillBookInfo() {
-	// Remove the table of books
-	// Display the form for adding a new book
-	// Access the inputs from the form when submitted
-	// Create a new book object and add it to the library
-	// Display the library with the new book added
-	
+function fillBookInfo() {	
 	removeTable();
 	displayForm();
 };
@@ -202,11 +196,24 @@ function displayLibrary() {
 					counter += 1;
 					break;
 			}
-			bookContainer.appendChild(f);			
+			bookContainer.appendChild(f);
 		});
+		const removeBtn = document.createElement('button');
+                removeBtn.classList.add('remove-btn');
+                removeBtn.textContent = 'Remove';
+		removeBtn.addEventListener('click', removeBook);
+
+                bookContainer.appendChild(removeBtn);
 		mainContainer.appendChild(bookContainer);
 	});
 };
+
+function removeBook(e) {
+	const bookTarget = e.currentTarget.parentElement;
+	let index = Number(bookTarget.querySelector('.book-index').textContent) - 1;
+	myLibrary.splice(index, 1);
+	bookTarget.remove();
+}
 
 function createInterface() {
 	// Create a library interface for displaying books 
