@@ -1,42 +1,29 @@
 import "./style.css";
 
 const myLibrary = [];
-addBookToLibrary("Atomic Habits", "James Clear", 271, false);
-addBookToLibrary(
-  "The Social Contract and Discourses",
-  "Jean-Jacques Rousseau",
-  362,
-  false,
-);
-addBookToLibrary(
-  "The Meditations of Marcus Aurelius",
-  "Marcus Aurelius",
-  128,
-  true,
-);
-createInterface();
-displayLibrary();
 
-function Book(title, author, pages, read) {
-  this.title = title;
-  this.author = author;
-  this.pages = pages;
-  this.read = read;
+class Book {
+  constructor(title, author, pages, read) {
+    this.title = title;
+    this.author = author;
+    this.pages = pages;
+    this.read = read;
+  }
 }
 
-function fillBookInfo() {
+const fillBookInfo = () => {
   removeTable();
   displayForm();
-}
+};
 
-function removeTable() {
+const removeTable = () => {
   const tHead = document.querySelector(".table-header");
   const books = document.querySelectorAll(".book-container");
   tHead.remove();
   Array.from(books).forEach((book) => book.remove());
-}
+};
 
-function displayForm() {
+const displayForm = () => {
   const container = document.querySelector(".main");
   const form = document.createElement("form");
   const fieldset = document.createElement("fieldset");
@@ -116,17 +103,14 @@ function displayForm() {
   form.appendChild(btnContainer);
   container.appendChild(form);
   form.addEventListener("submit", validateForm);
-}
+};
 
-function validateForm(e) {
+const validateForm = (e) => {
   e.preventDefault();
-
   let validInput = true;
-
   const inputs = document.querySelectorAll("input");
-
-  // Validate each input
   const inputValues = [];
+
   Array.from(inputs).forEach((input) => {
     switch (input.type) {
       case "radio":
@@ -150,18 +134,19 @@ function validateForm(e) {
     document.querySelector("#form").remove();
     displayLibrary();
   } else console.log("Error");
-}
+};
 
-function addBookToLibrary(bookTitle, bookAuthor, bookPages, bookRead) {
+const addBookToLibrary = (bookTitle, bookAuthor, bookPages, bookRead) => {
   const newBook = new Book(bookTitle, bookAuthor, bookPages, bookRead);
   myLibrary.push(newBook);
-}
+};
 
-function displayLibrary() {
+const displayLibrary = () => {
   const mainContainer = document.querySelector(".main");
-
   const tableHeader = document.createElement("div");
   const tableHeaders = ["Index", "Title", "Author", "Pages", "Read"];
+  const bookContainer = document.createElement("div");
+
   tableHeader.classList.add("table-header", "container");
   tableHeaders.forEach((elt) => {
     const e = document.createElement("h3");
@@ -170,13 +155,15 @@ function displayLibrary() {
   });
   mainContainer.appendChild(tableHeader);
 
-  const bookContainer = document.createElement("div");
   bookContainer.classList.add("book-container", "container");
   let counter = 1;
 
   myLibrary.forEach((book) => {
     // Display the books on the page
     const fields = ["index", "title", "author", "pages", "read"];
+    const removeBtn = document.createElement("button");
+    const toggleRead = document.createElement("button");
+
     fields.forEach((field) => {
       const f = document.createElement("p");
       f.classList.add(`book-${field}`);
@@ -201,13 +188,11 @@ function displayLibrary() {
       }
       bookContainer.appendChild(f);
     });
-    const removeBtn = document.createElement("button");
     removeBtn.classList.add("remove-btn");
     removeBtn.setAttribute("id", counter - 1);
     removeBtn.textContent = "Remove";
     removeBtn.addEventListener("click", removeBook);
 
-    const toggleRead = document.createElement("button");
     toggleRead.classList.add("toggle-read-btn");
     toggleRead.setAttribute("id", counter - 1);
     toggleRead.textContent = "Read?";
@@ -217,23 +202,23 @@ function displayLibrary() {
     bookContainer.appendChild(toggleRead);
     mainContainer.appendChild(bookContainer);
   });
-}
+};
 
-function removeBook(e) {
+const removeBook = (e) => {
   let index = Number(e.currentTarget.id) - 1;
   myLibrary.splice(index, 1);
   removeTable();
   displayLibrary();
-}
+};
 
-function toggleReadStatus(e) {
+const toggleReadStatus = (e) => {
   let index = e.currentTarget.id - 1;
   myLibrary[index].read = myLibrary[index].read ? false : true;
   removeTable();
   displayLibrary();
-}
+};
 
-function createInterface() {
+const createInterface = () => {
   // Create a library interface for displaying books
   const header = document.createElement("div");
   const footer = document.createElement("div");
@@ -241,6 +226,7 @@ function createInterface() {
   const main = document.createElement("div");
   const tableHeader = document.createElement("div");
   const title = document.createElement("h1");
+  const btn = document.createElement("button");
 
   header.classList.add("header", "container");
   footer.classList.add("footer", "container");
@@ -250,7 +236,6 @@ function createInterface() {
   title.textContent = "Book Library";
   header.appendChild(title);
 
-  const btn = document.createElement("button");
   btn.textContent = "NEW BOOK";
   btn.setAttribute("id", "new-book");
   btn.addEventListener("click", fillBookInfo);
@@ -264,4 +249,20 @@ function createInterface() {
   document.body.appendChild(header);
   document.body.appendChild(main);
   document.body.appendChild(footer);
-}
+};
+
+addBookToLibrary("Atomic Habits", "James Clear", 271, false);
+addBookToLibrary(
+  "The Social Contract and Discourses",
+  "Jean-Jacques Rousseau",
+  362,
+  false,
+);
+addBookToLibrary(
+  "The Meditations of Marcus Aurelius",
+  "Marcus Aurelius",
+  128,
+  true,
+);
+createInterface();
+displayLibrary();
