@@ -11,204 +11,230 @@ class Book {
   }
 }
 
+class BookWrapper {
+  constructor(book) {
+    this.wrapper = document.createElement("div");
+    const bookIndex = document.createElement("div");
+    const bookTitle = document.createElement("div");
+    const bookAuthor = document.createElement("div");
+    const bookPages = document.createElement("div");
+    const bookReadStatus = document.createElement("input");
+    const deleteIcon = document.createElement("ion-icon");
+
+    this.wrapper.classList.add("book-wrapper");
+    bookIndex.classList.add("index");
+    bookTitle.classList.add("title");
+    bookAuthor.classList.add("author");
+    bookPages.classList.add("pages");
+    bookReadStatus.classList.add("read-status");
+    bookReadStatus.type = "checkbox";
+    deleteIcon.setAttribute("name", "trash-outline");
+
+    bookIndex.textContent = this.getBookIndex();
+    bookTitle.textContent = book.title;
+    bookAuthor.textContent = book.author;
+    bookPages.textContent = book.pages;
+    bookReadStatus.checked = book.read;
+    bookReadStatus.addEventListener("click", changeReadStatus);
+    deleteIcon.addEventListener("click", removeBook);
+
+    this.wrapper.appendChild(bookReadStatus);
+    this.wrapper.appendChild(bookIndex);
+    this.wrapper.appendChild(bookTitle);
+    this.wrapper.appendChild(bookAuthor);
+    this.wrapper.appendChild(bookPages);
+    this.wrapper.appendChild(deleteIcon);
+  }
+
+  getBookIndex() {
+    const lastBook = document.querySelector(".book-wrapper:last-of-type");
+    if (lastBook === null) return 1;
+    return Number(lastBook.querySelector(".index").textContent) + 1;
+  }
+}
+
+const changeReadStatus = (book) => {
+  const bookIndex = book.currentTarget.nextElementSibling.textContent;
+  myLibrary[bookIndex - 1].read = book.currentTarget.checked;
+};
+
 const fillBookInfo = () => {
   removeTable();
   displayForm();
 };
 
 const removeTable = () => {
-  const tHead = document.querySelector(".table-header");
-  const books = document.querySelectorAll(".book-container");
-  tHead.remove();
+  const books = document.querySelectorAll(".book-wrapper");
   Array.from(books).forEach((book) => book.remove());
 };
 
 const displayForm = () => {
-  const container = document.querySelector(".main");
-  const form = document.createElement("form");
-  const fieldset = document.createElement("fieldset");
-  const legend = document.createElement("legend");
-  const btnContainer = document.createElement("div");
-  const fields = ["Title", "Author", "Pages", "Read"];
-  const btns = ["Add", "Clear"];
+  if (document.querySelector("form") === null) {
+    const container = document.querySelector(".main");
+    const form = document.createElement("form");
+    const fieldset = document.createElement("fieldset");
+    const legend = document.createElement("legend");
+    const btnContainer = document.createElement("div");
+    const fields = ["Title", "Author", "Pages", "Read"];
+    const btns = ["Add", "Clear"];
 
-  form.classList.add("container");
-  form.setAttribute("id", "form");
-  form.noValidate = true;
-  fieldset.classList.add("container");
-  btnContainer.classList.add("btn-container", "container");
+    container.classList.toggle("library");
+    form.setAttribute("id", "form");
+    form.noValidate = true;
+    btnContainer.classList.add("btn-container");
 
-  legend.textContent = "Book information";
-  fieldset.appendChild(legend);
+    legend.textContent = "Book information";
+    fieldset.appendChild(legend);
 
-  fields.forEach((field) => {
-    let id = field.toLowerCase();
-    switch (field) {
-      case "Title":
-      case "Author":
-      case "Pages":
-        const label = document.createElement("label");
-        label.setAttribute("for", id);
-        label.textContent = field;
-        const input = document.createElement("input");
-        input.setAttribute("id", id);
-        input.setAttribute("name", id);
+    fields.forEach((field) => {
+      let id = field.toLowerCase();
+      const inputWrapper = document.createElement("div");
+      inputWrapper.classList.add("input-wrapper");
 
-        if (field === "Pages") input.setAttribute("type", "number");
-        fieldset.appendChild(label);
-        fieldset.appendChild(input);
-        break;
-      default:
-        const optContainer = document.createElement("div");
-        optContainer.classList.add("options", "container");
-        const optLabel = document.createElement("label");
-        optLabel.setAttribute("id", "read-label");
-        optLabel.textContent = "Have you read the book?";
-
-        ["Yes", "No"].forEach((option) => {
-          const optRadioBtn = document.createElement("input");
-          optRadioBtn.setAttribute("type", "radio");
-          optRadioBtn.setAttribute("id", option.toLowerCase());
-          optRadioBtn.setAttribute("name", id);
-          optRadioBtn.setAttribute("value", option === "Yes" ? true : false);
-          if (option == "No") optRadioBtn.checked = true;
-
+      switch (field) {
+        case "Title":
+        case "Author":
+        case "Pages":
           const label = document.createElement("label");
-          label.setAttribute("for", option.toLowerCase());
-          label.textContent = option;
+          const input = document.createElement("input");
+          const error = document.createElement("span");
 
-          const radioContainer = document.createElement("div");
-          radioContainer.classList.add("radio", "container");
+          label.setAttribute("for", id);
+          label.textContent = field;
+          input.setAttribute("id", id);
+          input.setAttribute("name", id);
+          error.setAttribute("class", "error");
+          error.setAttribute("aria-live", "polite");
+          if (field === "Pages") input.setAttribute("type", "number");
 
-          radioContainer.appendChild(optRadioBtn);
-          radioContainer.appendChild(label);
-          optContainer.appendChild(radioContainer);
-        });
+          input.addEventListener("input", () => {
+            let isValid;
+            if (field === "Pages") {
+              isValid = input.value > 4;
+            } else isValid = input.value.length >= 0 && input.value.length < 25;
 
-        fieldset.appendChild(optLabel);
-        fieldset.appendChild(optContainer);
-        break;
-    }
-  });
+            const error = input.nextElementSibling;
 
-  btns.forEach((btnTitle) => {
-    const btn = document.createElement("button");
-    btn.setAttribute("id", `${btnTitle.toLowerCase()}-btn`);
-    btn.textContent = btnTitle;
-    btn.setAttribute("type", btnTitle === "Add" ? "Submit" : "Reset");
-    btnContainer.appendChild(btn);
-  });
+            if (isValid) {
+              input.className = "valid";
+              error.textContent = "";
+              error.className = "error";
+            } else {
+              input.className = "invalid";
+            }
+          });
 
-  form.appendChild(fieldset);
-  form.appendChild(btnContainer);
-  container.appendChild(form);
-  form.addEventListener("submit", validateForm);
+          inputWrapper.appendChild(label);
+          inputWrapper.appendChild(input);
+          inputWrapper.appendChild(error);
+          break;
+        default:
+          const radioWrapper = document.createElement("div");
+          const optLabel = document.createElement("label");
+
+          inputWrapper.classList.add("options");
+          radioWrapper.classList.add("radio-wrapper");
+          optLabel.setAttribute("id", "read-label");
+          optLabel.textContent = "Have you read the book?";
+          inputWrapper.appendChild(optLabel);
+
+          ["Yes", "No"].forEach((option) => {
+            const optRadioBtn = document.createElement("input");
+            optRadioBtn.setAttribute("type", "radio");
+            optRadioBtn.setAttribute("id", option.toLowerCase());
+            optRadioBtn.setAttribute("name", id);
+            optRadioBtn.setAttribute("value", option === "Yes" ? true : false);
+            if (option == "No") optRadioBtn.checked = true;
+
+            const label = document.createElement("label");
+            const radioContainer = document.createElement("div");
+
+            label.setAttribute("for", option.toLowerCase());
+            label.textContent = option;
+            radioContainer.classList.add("radio");
+
+            radioContainer.appendChild(optRadioBtn);
+            radioContainer.appendChild(label);
+            radioWrapper.appendChild(radioContainer);
+          });
+          inputWrapper.appendChild(radioWrapper);
+
+          break;
+      }
+      fieldset.appendChild(inputWrapper);
+    });
+
+    btns.forEach((btnTitle) => {
+      const btn = document.createElement("button");
+      btn.setAttribute("id", `${btnTitle.toLowerCase()}-btn`);
+      btn.textContent = btnTitle;
+      btn.setAttribute("type", btnTitle === "Add" ? "Submit" : "Reset");
+      btnContainer.appendChild(btn);
+    });
+
+    form.appendChild(fieldset);
+    form.appendChild(btnContainer);
+    container.appendChild(form);
+    form.addEventListener("submit", validateForm);
+  }
 };
 
 const validateForm = (e) => {
   e.preventDefault();
-  let validInput = true;
-  const inputs = document.querySelectorAll("input");
-  const inputValues = [];
+  const title = document.querySelector("#title");
+  const author = document.querySelector("#author");
+  const pages = document.querySelector("#pages");
+  const isRead = document.querySelector("input#yes").checked;
 
-  Array.from(inputs).forEach((input) => {
-    switch (input.type) {
-      case "radio":
-        if (input.checked) inputValues.push(input.id);
-        break;
-      default:
-        if (!input.value) validInput = false;
-        else inputValues.push(input.value);
-        break;
+  const isTitleValid = title.value.length > 0 && title.value.length < 25;
+  const isAuthorValid = author.value.length > 0 && author.value.length < 25;
+  const isPagesValid = pages.value > 4;
+
+  if (!(isTitleValid && isAuthorValid && isPagesValid)) {
+    if (!isTitleValid) {
+      const error = title.nextElementSibling;
+      title.className = "invalid";
+      error.textContent = "The title should contain 1-25 characters.";
+      error.className = "error active";
     }
-  });
 
-  if (validInput) {
-    let read = inputValues[3] === "yes" ? true : false;
-    addBookToLibrary(
-      inputValues[0],
-      inputValues[1],
-      Number(inputValues[2]),
-      read,
-    );
-    document.querySelector("#form").remove();
+    if (!isAuthorValid) {
+      const error = author.nextElementSibling;
+      author.className = "invalid";
+      error.textContent = "The author name should contain 1-25 characters.";
+      error.className = "error active";
+    }
+
+    if (!isPagesValid) {
+      const error = pages.nextElementSibling;
+      pages.className = "invalid";
+      error.textContent = "The book should contain at least 5 pages.";
+      error.className = "error active";
+    }
+  } else {
+    const newBook = new Book(title.value, author.value, pages.value, isRead);
+    myLibrary.push(newBook);
+    document.querySelector("form").remove();
     displayLibrary();
-  } else console.log("Error");
-};
-
-const addBookToLibrary = (bookTitle, bookAuthor, bookPages, bookRead) => {
-  const newBook = new Book(bookTitle, bookAuthor, bookPages, bookRead);
-  myLibrary.push(newBook);
+  }
 };
 
 const displayLibrary = () => {
-  const mainContainer = document.querySelector(".main");
-  const tableHeader = document.createElement("div");
-  const tableHeaders = ["Index", "Title", "Author", "Pages", "Read"];
-  const bookContainer = document.createElement("div");
-
-  tableHeader.classList.add("table-header", "container");
-  tableHeaders.forEach((elt) => {
-    const e = document.createElement("h3");
-    e.textContent = elt;
-    tableHeader.appendChild(e);
-  });
-  mainContainer.appendChild(tableHeader);
-
-  bookContainer.classList.add("book-container", "container");
-  let counter = 1;
+  const mainWrapper = document.querySelector(".main");
+  mainWrapper.className = "main library";
 
   myLibrary.forEach((book) => {
-    // Display the books on the page
-    const fields = ["index", "title", "author", "pages", "read"];
-    const removeBtn = document.createElement("button");
-    const toggleRead = document.createElement("button");
-
-    fields.forEach((field) => {
-      const f = document.createElement("p");
-      f.classList.add(`book-${field}`);
-
-      switch (field) {
-        case "title":
-          f.textContent = book.title;
-          break;
-        case "author":
-          f.textContent = book.author;
-          break;
-        case "pages":
-          f.textContent = book.pages;
-          break;
-        case "read":
-          f.textContent = book.read ? "Yes" : "No";
-          break;
-        default:
-          f.textContent = counter;
-          counter += 1;
-          break;
-      }
-      bookContainer.appendChild(f);
-    });
-    removeBtn.classList.add("remove-btn");
-    removeBtn.setAttribute("id", counter - 1);
-    removeBtn.textContent = "Remove";
-    removeBtn.addEventListener("click", removeBook);
-
-    toggleRead.classList.add("toggle-read-btn");
-    toggleRead.setAttribute("id", counter - 1);
-    toggleRead.textContent = "Read?";
-    toggleRead.addEventListener("click", toggleReadStatus);
-
-    bookContainer.appendChild(removeBtn);
-    bookContainer.appendChild(toggleRead);
-    mainContainer.appendChild(bookContainer);
+    mainWrapper.appendChild(new BookWrapper(book).wrapper);
   });
 };
 
 const removeBook = (e) => {
-  let index = Number(e.currentTarget.id) - 1;
+  let index =
+    Number(e.currentTarget.parentElement.querySelector(".index").textContent) -
+    1;
+
   myLibrary.splice(index, 1);
-  removeTable();
-  displayLibrary();
+  e.currentTarget.parentElement.remove();
 };
 
 const toggleReadStatus = (e) => {
@@ -251,18 +277,16 @@ const createInterface = () => {
   document.body.appendChild(footer);
 };
 
-addBookToLibrary("Atomic Habits", "James Clear", 271, false);
-addBookToLibrary(
-  "The Social Contract and Discourses",
-  "Jean-Jacques Rousseau",
-  362,
-  false,
-);
-addBookToLibrary(
-  "The Meditations of Marcus Aurelius",
-  "Marcus Aurelius",
-  128,
+const atomicHabits = new Book("Atomic Habits", "James Clear", 271, true);
+const socialContract = new Book(
+  "The Social Contract",
+  "Jean Jacques Rousseau",
+  404,
   true,
 );
+const bAn = new Book("Being and Nothingness", "Jean Paul Sartre", 811, false);
+myLibrary.push(atomicHabits);
+myLibrary.push(bAn);
+myLibrary.push(socialContract);
 createInterface();
 displayLibrary();
